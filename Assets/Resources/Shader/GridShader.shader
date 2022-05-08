@@ -3,8 +3,10 @@ Shader "Unlit/GridShader"
     Properties
     {
          _Scale("Scale", Float) = 1.0
+        
+        _Rotation ("Rotation Time 2 Radian", Float) = 0.0
          
-        _XAxisRotation  ("Rotation", Float)   = 0.0
+        _XAxisRotation  ("X Rotation", Float) = 0.0
         _YAxisRotation  ("Y Rotation", Float) = 0.0
         
         _Thickness              ("Lines Thickness"         ,  Range(0.0001, 0.5)) = 0.005
@@ -24,8 +26,8 @@ Shader "Unlit/GridShader"
         Tags { "RenderType"="Opaque" }
         LOD 100
         
-  
-
+        ZWrite On 
+        
         Pass
         {
             CGPROGRAM
@@ -48,6 +50,8 @@ Shader "Unlit/GridShader"
 
             float _Scale;
 
+            float _Rotation;
+
             float _XAxisRotation;
             float _YAxisRotation;
 
@@ -63,10 +67,27 @@ Shader "Unlit/GridShader"
             sampler2D _MainTex   ;
             float4    _MainTex_ST;
 
+             float2 RotateMatrixByAngle(float2 pos, float rotation)
+            {
+                const float PI = 3.14159;
+                
+                float angle = -rotation;
+
+                float s = sin(angle);
+                float c = cos(angle);
+
+                float2x2 rotationMat = float2x2(c, s, -s, c);
+
+                float2 newPos = mul(rotationMat, pos);
+
+                return newPos;
+            }
+
             float2 RotateMatrix(float2 pos, float rotation)
             {
                 const float PI = 3.14159;
-                float angle = rotation * PI * 2 * -1;
+                
+                float angle = rotation * 2 * PI * -1;
 
                 float s = sin(angle);
                 float c = cos(angle);
@@ -94,6 +115,8 @@ Shader "Unlit/GridShader"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv     = TRANSFORM_TEX(v.uv, _MainTex);
+
+                 //o.uv = mul(unity_ObjectToWorld, v.vertex).xz;
                 return o;
             }
 
@@ -104,14 +127,17 @@ Shader "Unlit/GridShader"
                 fixed4 col = _MainColor;
 
 
+                //_XAxisRotation = _Rotation;
+                //_YAxisRotation = _Rotation;
 
                 float _logMappedScale = _Scale / pow(10, ceil(log10(_Scale)));
-                float _localScale     = 1 / _logMappedScale;
+                float _localScale     = (1 / _logMappedScale);
 
-                float _fade = pow(1 - Remap(_logMappedScale, 0.1, 1, 0.00001, 0.99999), 0.5);
+                float _fade = pow(1 - Remap(_logMappedScale, 0.1, 1, 0.00001, 0.99999), 4);
                 
 
-                float _xlineColor = 1.0f;
+                float _xlineColor    = 1.0f;
+                float _xSubLineColor = 1.0f;
 
                 _pos.xy = RotateMatrix(i.uv.xy, _XAxisRotation);
                 
@@ -119,8 +145,7 @@ Shader "Unlit/GridShader"
                 
                 if(_pos.x == 1)
                 {
-                    //_xlineColor = 0.0f;
-                    _xlineColor = max((1 - _fade), _fade);
+                    _xlineColor = min(_fade, 0.1);
                 }
                 else
                 {
@@ -129,21 +154,22 @@ Shader "Unlit/GridShader"
 
                     if(_pos.x == 1)
                     {
-                        //_xlineColor = 0.0f;
-                        _xlineColor = (1 - _fade);
+                        //_xlineColor = _fade;
+                        _xSubLineColor = _fade;
                     }
                 }
 
                 
 
                 float _ylineColor = 1.0f;
+                float _ySubLineColor = 1.0f;
 
                 _pos.xy = RotateMatrix(i.uv.xy, _YAxisRotation);
                 _pos.y  = floor(frac(_pos.y * _localScale) + _Thickness);
 
                 if( _pos.y == 1)
                 {
-                    _ylineColor = 0.0f;;
+                    _xlineColor = min(_fade, 0.1);
                 }
                 else
                 {
@@ -152,13 +178,22 @@ Shader "Unlit/GridShader"
 
                     if(_pos.y == 1)
                     {
-                        _ylineColor = 0.0f;
+                        //_ylineColor = _fade;
+                        _ySubLineColor = _fade;
                     }
                 }
 
-                float c = Union(_xlineColor, _ylineColor);
+                float _mainColor = Union(_xlineColor, _ylineColor);
+                _mainColor = 1 - _mainColor;
 
-                col = fixed4(c, c, c, 1.0);
+                
+                float _subColor = Union(_xSubLineColor, _ySubLineColor);
+
+
+                
+                col = _mainColor * _MainColor;
+
+               
                 
                 return col;
             }

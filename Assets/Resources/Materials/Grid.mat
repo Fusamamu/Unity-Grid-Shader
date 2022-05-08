@@ -97,27 +97,27 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Rotation: 0
-    - _Scale: 108.1
+    - _Scale: 3.92
     - _SecondaryInterval: 100
-    - _SecondaryLineThickness: 0.053
+    - _SecondaryLineThickness: 0.015
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
-    - _Thickness: 0.022
+    - _Thickness: 0.008
     - _WorkflowMode: 1
-    - _XAxisRotation: 13.2
-    - _YAxisRotation: 0.08
+    - _XAxisRotation: 0.16666667
+    - _YAxisRotation: 0.083333336
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LineColor: {r: 0.11320752, g: 0.049661785, b: 0.049661785, a: 1}
-    - _MainColor: {r: 0.12213893, g: 0.05072979, b: 0.18867922, a: 1}
-    - _MainLineColor: {r: 0.37937608, g: 0.29730332, b: 0.4811321, a: 1}
-    - _SecondaryLineColor: {r: 0.4433962, g: 0.2572889, b: 0.2237896, a: 1}
+    - _MainColor: {r: 0.754717, g: 0.3305453, b: 0.16019939, a: 1}
+    - _MainLineColor: {r: 0.331249, g: 0.06541474, b: 0.6603774, a: 1}
+    - _SecondaryLineColor: {r: 0.8679245, g: 0.28036478, b: 0.16785331, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &7483053388987746791
