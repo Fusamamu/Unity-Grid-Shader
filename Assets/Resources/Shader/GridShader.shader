@@ -124,11 +124,7 @@ Shader "Unlit/GridShader"
             {
                 float2 _pos;
                 
-                fixed4 col = _MainColor;
-
-
-                //_XAxisRotation = _Rotation;
-                //_YAxisRotation = _Rotation;
+                fixed4 col;
 
                 float _logMappedScale = _Scale / pow(10, ceil(log10(_Scale)));
                 float _localScale     = (1 / _logMappedScale);
@@ -154,7 +150,6 @@ Shader "Unlit/GridShader"
 
                     if(_pos.x == 1)
                     {
-                        //_xlineColor = _fade;
                         _xSubLineColor = _fade;
                     }
                 }
@@ -178,22 +173,22 @@ Shader "Unlit/GridShader"
 
                     if(_pos.y == 1)
                     {
-                        //_ylineColor = _fade;
                         _ySubLineColor = _fade;
                     }
                 }
 
-                float _mainColor = Union(_xlineColor, _ylineColor);
-                _mainColor = 1 - _mainColor;
-
+                float _mainLineShape   = Union(_xlineColor,    _ylineColor   );
+                float _subLineShape    = Union(_xSubLineColor, _ySubLineColor);
+                float _backGroundShape = Union(_mainLineShape, _subLineShape);
                 
-                float _subColor = Union(_xSubLineColor, _ySubLineColor);
+                _mainLineShape   = 1 - _mainLineShape;
+                _subLineShape    = 1 - _subLineShape;
 
-
+                fixed4 _c1 = _mainLineShape * _MainLineColor;
+                fixed4 _c2 = _subLineShape  * _SecondaryLineColor;
+                fixed4 _c3 = _backGroundShape * _MainColor;
                 
-                col = _mainColor * _MainColor;
-
-               
+                col = _c1 + _c2 + _c3;
                 
                 return col;
             }
